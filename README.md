@@ -6,13 +6,13 @@ This demonstrates how to create tasks and place them in push queues using [Googl
 
 1. When running locally, you can use the [Google Cloud SDK](https://cloud.google.com/sdk) to provide authentication to use Google Cloud APIs:
 
-    $ gcloud init
+        $ gcloud init
 
 2. Download the [Google App Engine Python SDK](https://cloud.google.com/appengine/downloads) for your platform.
 
 3. To run this app locally, specify both `.yaml` files to `dev_appserver.py`:
 
-    $ dev_appserver.py -A your-app-id app.yaml worker.yaml
+        $ dev_appserver.py -A your-app-id app.yaml worker.yaml
 
 4. Visit `http://localhost:8080/stats/` to view your application.
 

@@ -34,7 +34,7 @@ This demonstrates how to create tasks and place them in push queues using [Googl
 
 ## How to test the API
 
-    To make it simpler to try, I've already published the example so you can test it directly. Use your favorite client to make calls to the API, I leave as an example the calls using cURL.
+   To make it simpler to try, I've already published the example so you can test it directly. Use your favorite client to make calls to the API, I leave as an example the calls using cURL.
     
         curl -X GET \
           https://pid-rmscm02500.appspot.com/stats/ \

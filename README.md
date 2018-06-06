@@ -44,7 +44,7 @@ This demonstrates how to create tasks and place them in push queues using [Googl
           https://pid-rmscm02500.appspot.com/mutant/ \
           -H 'cache-control: no-cache' \
           -H 'content-type: application/json' \
-          -d '{"dna":["TTGCCA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]}'    
+          -d '{"dna":["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]}'    
 
 ## Local Unit Testing for Python
 

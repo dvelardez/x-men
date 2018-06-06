@@ -46,4 +46,14 @@ This demonstrates how to create tasks and place them in push queues using [Googl
           -H 'content-type: application/json' \
           -d '{"dna":["TTGCCA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]}'    
 
+## Local Unit Testing for Python
 
+   Install dependencies, preferably with a virtualenv:
+   
+        $ virtualenv env
+        $ source env/bin/activate
+        $ pip install -r requirements.txt
+
+   You can run these tests simply by running the script runner.py
+   
+        python runner.py <path-to-appengine-or-gcloud-SDK>

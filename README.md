@@ -56,4 +56,4 @@ This demonstrates how to create tasks and place them in push queues using [Googl
 
    You can run these tests simply by running the script runner.py
    
-        python runner.py <path-to-appengine>
+        python runner.py <path-to-appengine-SDK>

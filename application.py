@@ -1,8 +1,10 @@
 from google.appengine.api import taskqueue
 from google.appengine.ext import ndb
-import webapp2
+
 import itertools
 import json
+import re
+import webapp2
 
 
 class Human:
@@ -65,6 +67,11 @@ class DetectMutantHandler(webapp2.RequestHandler):
             return
 
         dna = json.loads(self.request.body)
+        if not self.valid_dna(dna.get('dna')):
+            self.response.write("Bad request.")
+            self.response.status_int = 400
+            return
+
         human = Human()
         is_mutant = human.is_mutant(dna.get('dna'))
 
@@ -81,6 +88,18 @@ class DetectMutantHandler(webapp2.RequestHandler):
         else:
             self.response.write("Is human.")
             self.response.status_int = 403
+
+    @staticmethod
+    def valid_dna(dna):
+        # Validate that the matrix is a square and that the letters are A, T, C, G.
+        rows = len(dna)
+        if rows < 4:
+            return False
+        pattern = re.compile("^[ATCG]*$")
+        for row in dna:
+            if rows != len(row) or not pattern.match(row):
+                return False
+        return True
 
 
 app = webapp2.WSGIApplication([

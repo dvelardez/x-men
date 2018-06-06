@@ -33,6 +33,7 @@ class AppTest(unittest.TestCase):
 
         dna_mutant = {"dna": ["ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"]}
         dna_human = {"dna": ["TTGCCA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"]}
+        dna_not_human = {"dna": ["ETGCCA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"]}
 
         response = self.test_app.post_json('/mutant/', dna_mutant)
         assert 'It is mutant.' in response.body
@@ -40,6 +41,10 @@ class AppTest(unittest.TestCase):
         with self.assertRaises(webtest.AppError) as exc:
             self.test_app.post_json('/mutant/', dna_human)
         self.assertTrue(str(exc.exception).startswith('Bad response: 403'))
+
+        with self.assertRaises(webtest.AppError) as exc:
+            self.test_app.post_json('/mutant/', dna_not_human)
+        self.assertTrue(str(exc.exception).startswith('Bad response: 400'))
 
         tq_stub = self.testbed.get_stub(gaetestbed.TASKQUEUE_SERVICE_NAME)
         tasks = tq_stub.get_filtered_tasks()

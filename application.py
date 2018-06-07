@@ -103,6 +103,8 @@ class DetectMutantHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
+    ('/stats', StatsHandler),
     ('/stats/', StatsHandler),
+    ('/mutant', DetectMutantHandler),
     ('/mutant/', DetectMutantHandler)
 ], debug=True)

@@ -1,9 +1,13 @@
+import json
 import os
 import unittest
 import webtest
 
 import application
 import worker
+
+import human_counter
+import mutant_counter
 
 from google.appengine.ext import ndb
 from google.appengine.ext import testbed as gaetestbed
@@ -60,3 +64,20 @@ class AppTest(unittest.TestCase):
         params = {'dna': dna_human, 'is_mutant': False}
         response = self.test_worker.post(tasks[1].url, params)
         assert response.status_int == 200
+
+    def testStatsHandler(self):
+        count_mutant_dna = 40
+        count_human_dna = 100
+
+        # Put two entities
+        ndb.put_multi([
+            mutant_counter.MutantCounterShard(id=12, count=count_mutant_dna),
+            human_counter.HumanCounterShard(id=4, count=count_human_dna/2),
+            human_counter.HumanCounterShard(id=17, count=count_human_dna/2)
+        ])
+
+        response = self.test_app.get('/stats/')
+        stats = json.loads(response.text)
+        assert stats.get('count_mutant_dna') == count_mutant_dna
+        assert stats.get('count_human_dna') == count_human_dna
+        assert stats.get('ratio') == float(count_mutant_dna)/count_human_dna

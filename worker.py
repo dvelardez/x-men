@@ -1,12 +1,7 @@
 # [START all]
 
-from google.appengine.ext import ndb
+import dna as adn
 import webapp2
-
-
-class Dna(ndb.Model):
-    dna = ndb.JsonProperty()
-    is_mutant = ndb.BooleanProperty(indexed=True)
 
 
 class InsertDnaHandler(webapp2.RequestHandler):
@@ -14,14 +9,10 @@ class InsertDnaHandler(webapp2.RequestHandler):
         dna = self.request.get('dna')
         is_mutant = self.request.get('is_mutant') == 'True'
 
-        # This task should run at most once per second because of the datastore
-        # transaction write throughput.
-        @ndb.transactional
-        def add_dna():
-            new_dna = Dna(dna=dna, is_mutant=is_mutant)
-            new_dna.put()
-
-        add_dna()
+        # This task should run at most twenty times per second because of the datastore
+        # transaction write throughput (1/s for each entity group)
+        # and the amount of shards that the counters have (20 shards).
+        adn.add_dna(dna, is_mutant)
 
 
 app = webapp2.WSGIApplication([

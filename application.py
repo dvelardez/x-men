@@ -1,5 +1,7 @@
 from google.appengine.api import taskqueue
-from google.appengine.ext import ndb
+
+import human_counter
+import mutant_counter
 
 import itertools
 import json
@@ -43,20 +45,15 @@ class Human:
         yield tuple(submat[rc][3 - rc] for rc in range(0, 4))
 
 
-class Dna(ndb.Model):
-    dna = ndb.JsonProperty()
-    is_mutant = ndb.BooleanProperty(indexed=True)
-
-
 class StatsHandler(webapp2.RequestHandler):
     def get(self):
-        count_mutant_dna = Dna.query(Dna.is_mutant==True).count()
-        count_human_dna = Dna.query(Dna.is_mutant==False).count()
+        count_mutant_dna = mutant_counter.get_count()
+        count_human_dna = human_counter.get_count()
         ratio = 'undefined'
         if count_human_dna > 0:
             ratio = float(count_mutant_dna)/count_human_dna
         result = {"count_mutant_dna": count_mutant_dna, "count_human_dna": count_human_dna, "ratio": ratio}
-        self.response.write(result)
+        self.response.write(json.dumps(result))
 
 
 class DetectMutantHandler(webapp2.RequestHandler):

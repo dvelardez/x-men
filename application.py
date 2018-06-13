@@ -9,7 +9,7 @@ import re
 import webapp2
 
 
-class Human:
+class Human(object):
     @staticmethod
     def is_mutant(dna):
         rows = len(dna)
@@ -17,32 +17,12 @@ class Human:
         sequences_found = []
         for i in range(rows - 4 + 1):
             for j in range(columns - 4 + 1):
-                for item in Human.iterate_submatrix(dna, i, j):
-                    consecutive = Human.consecutive(item)
-                    if consecutive and item not in sequences_found:
+                for item in iterate_submatrix(dna, i, j):
+                    is_consecutive = consecutive(item)
+                    if is_consecutive and item not in sequences_found:
                         print item
                         sequences_found.append(item)
         return len(sequences_found) > 1
-
-    @staticmethod
-    def consecutive(group):
-        first, second = itertools.tee(group)
-        second.next()
-        for first, second in itertools.izip(first, second):
-            if second != first:
-                return False
-        return True
-
-    @staticmethod
-    def iterate_submatrix(matrix, t, l):
-        # yield the horizontals and diagonals of 4x4  subsection of matrix starting at t(op), l(eft) as 4-tuples
-        submat = [row[l:l + 4] for row in matrix[t:t + 4]]
-        for r in submat:
-            yield tuple(r)
-        for c in range(0, 4):
-            yield tuple(r[c] for r in submat)
-        yield tuple(submat[rc][rc] for rc in range(0, 4))
-        yield tuple(submat[rc][3 - rc] for rc in range(0, 4))
 
 
 class StatsHandler(webapp2.RequestHandler):
@@ -69,8 +49,7 @@ class DetectMutantHandler(webapp2.RequestHandler):
             self.response.status_int = 400
             return
 
-        human = Human()
-        is_mutant = human.is_mutant(dna.get('dna'))
+        is_mutant = Human.is_mutant(dna.get('dna'))
 
         queue = taskqueue.Queue(name='default')
         task = taskqueue.Task(
@@ -97,6 +76,26 @@ class DetectMutantHandler(webapp2.RequestHandler):
             if rows != len(row) or not pattern.match(row):
                 return False
         return True
+
+
+def iterate_submatrix(matrix, t, l):
+    # yield the horizontals and diagonals of 4x4  subsection of matrix starting at t(op), l(eft) as 4-tuples
+    submat = [row[l:l + 4] for row in matrix[t:t + 4]]
+    for r in submat:
+        yield tuple(r)
+    for c in range(0, 4):
+        yield tuple(r[c] for r in submat)
+    yield tuple(submat[rc][rc] for rc in range(0, 4))
+    yield tuple(submat[rc][3 - rc] for rc in range(0, 4))
+
+
+def consecutive(group):
+    first, second = itertools.tee(group)
+    second.next()
+    for first, second in itertools.izip(first, second):
+        if second != first:
+            return False
+    return True
 
 
 app = webapp2.WSGIApplication([
